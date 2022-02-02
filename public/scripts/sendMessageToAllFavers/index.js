@@ -74,6 +74,42 @@ const sendMessageByQuery = async ({
     });
 };
 
+const deleteMessageThreadId = async ({
+  currentUserId,
+  msgThreadId,
+  csrf_token,
+}) => {
+  fetch(
+    `https://www.vinted.fr/api/v2/users/${currentUserId}/msg_threads/${msgThreadId}`,
+    {
+      headers: {
+        accept: "application/json, text/plain, */*",
+        "accept-language": "fr",
+        "content-type": "application/json",
+        "sec-ch-ua": '"Chromium";v="96", "Opera";v="82", ";Not A Brand";v="99"',
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": '"macOS"',
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "x-csrf-token": `${csrf_token}`,
+      },
+      referrer: `https://www.vinted.fr/inbox/${msgThreadId}`,
+      referrerPolicy: "strict-origin-when-cross-origin",
+      body: `{"body":"${messageContent}","photo_temp_uuids":null}`,
+      method: "DELETE",
+      mode: "cors",
+      credentials: "include",
+    }
+  )
+    .then(async (response) => {
+      return await response.json();
+    })
+    .then((data) => {
+      return data;
+    });
+};
+
 function getStorageValuePromise(key) {
   return new Promise((resolve) => {
     chrome.storage.local.get(key, resolve());
@@ -116,6 +152,12 @@ const sendMessageToAllFavers = async () => {
         });
 
         // await sendMessageByQuery({
+        //   currentUserId: currentUserId,
+        //   msgThreadId: msgThreadId,
+        //   csrf_token: csrf_token,
+        // });
+
+        // await deleteMessageThreadId({
         //   currentUserId: currentUserId,
         //   msgThreadId: msgThreadId,
         //   csrf_token: csrf_token,
