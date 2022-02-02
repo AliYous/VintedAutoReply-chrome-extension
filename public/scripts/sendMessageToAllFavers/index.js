@@ -74,9 +74,15 @@ const sendMessageByQuery = async ({
     });
 };
 
-const getChromeStorageValuePromise = (key) => {
+function getStorageValuePromise(key) {
   return new Promise((resolve) => {
-    chrome.storage.sync.get(key, resolve);
+    chrome.storage.local.get(key, resolve());
+  });
+}
+
+const saveToStoragePromise = async (key, value) => {
+  return new Promise((resolve) => {
+    chrome.storage.local.set({ [key]: value }, resolve);
   });
 };
 // -------------------------------------------
@@ -84,9 +90,9 @@ const getChromeStorageValuePromise = (key) => {
 const sendMessageToAllFavers = async () => {
   const allNotifications = await fetchAllNotifications();
 
-  let lastNotifHandledId = await getChromeStorageValuePromise(
-    "lastNotificationHandled"
-  );
+  // let lastNotificationHandled = await getStorageValuePromise(
+  //   "lastNotificationHandled"
+  // );
 
   let favNotifications = allNotifications.filter((notif) =>
     notif.link.includes("want_it")
@@ -115,12 +121,7 @@ const sendMessageToAllFavers = async () => {
         //   csrf_token: csrf_token,
         // });
 
-        chrome.storage.sync.set(
-          { lastNotificationHandled: notif.id },
-          function () {
-            console.log("saved to storage");
-          }
-        );
+        await saveToStoragePromise("lastNotificationHandled", notif.id);
       });
     }
   } else {
