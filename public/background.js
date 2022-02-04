@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable no-undef */
 // Globals
 
@@ -20,3 +21,18 @@ const runSendMessageToAllFavers = () => {
     }
   );
 };
+
+// Check whether new version is installed and sets the necessary localStorage variables
+chrome.runtime.onInstalled.addListener(function (details) {
+  if (details.reason == "install") {
+    console.log("This is a first install!");
+    chrome.storage.local.set({ deleteEachConvo: false });
+    chrome.storage.local.set({ lastNotificationHandled: null });
+    chrome.storage.local.set({ messageContent: "" });
+  } else if (details.reason == "update") {
+    var thisVersion = chrome.runtime.getManifest().version;
+    console.log(
+      "Updated from " + details.previousVersion + " to " + thisVersion + "!"
+    );
+  }
+});

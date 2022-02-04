@@ -126,9 +126,8 @@ async function saveToStoragePromise(key, value) {
 async function sendMessageToAllFavers({
   lastNotificationHandled,
   messageContent,
+  deleteEachConvo,
 }) {
-  console.log(lastNotificationHandled);
-  console.log(messageContent);
   let tempLastNotifHandledId = lastNotificationHandled;
   const allNotifications = await fetchAllNotifications();
 
@@ -160,11 +159,13 @@ async function sendMessageToAllFavers({
         // messageContent: messageContent,
         // });
 
-        // await deleteMessageThreadId({
-        //   currentUserId: currentUserId,
-        //   msgThreadId: msgThreadId,
-        //   csrf_token: csrf_token,
-        // });
+        if (deleteEachConvo) {
+          // await deleteMessageThreadId({
+          //   currentUserId: currentUserId,
+          //   msgThreadId: msgThreadId,
+          //   csrf_token: csrf_token,
+          // });
+        }
 
         tempLastNotifHandledId = notif.id;
       });
@@ -172,9 +173,9 @@ async function sendMessageToAllFavers({
         "lastNotificationHandled",
         tempLastNotifHandledId
       );
+      return null;
     }
   } else {
-    await saveToStoragePromise("lastNotificationHandled", 454768590);
     console.log(
       "No notifications were found or all notifications have already been handled"
     );
@@ -182,11 +183,19 @@ async function sendMessageToAllFavers({
 }
 
 chrome.storage.local.get(
-  ["lastNotificationHandled", "messageContent"],
-  function (items) {
-    sendMessageToAllFavers({
-      lastNotificationHandled: items.lastNotificationHandled,
-      messageContent: items.messageContent,
-    });
+  ["lastNotificationHandled", "messageContent", "deleteEachConvo"],
+  async (items) => {
+    try {
+      await sendMessageToAllFavers({
+        lastNotificationHandled: items.lastNotificationHandled,
+        messageContent: items.messageContent,
+        deleteEachConvo: items.deleteEachConvo,
+      });
+      chrome.runtime.sendMessage({
+        message: "autoSendExecutedSuccess",
+      });
+    } catch (err) {
+      console.log(err);
+    }
   }
 );
