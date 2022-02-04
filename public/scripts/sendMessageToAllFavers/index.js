@@ -128,7 +128,6 @@ async function sendMessageToAllFavers({
   messageContent,
   deleteEachConvo,
 }) {
-  let tempLastNotifHandledId = lastNotificationHandled;
   const allNotifications = await fetchAllNotifications();
 
   let favNotifications = allNotifications.filter((notif) =>
@@ -138,6 +137,18 @@ async function sendMessageToAllFavers({
   let unreadFavNotifications = favNotifications.filter((notif) => !notif.read);
 
   if (unreadFavNotifications.length > 0) {
+    if (lastNotificationHandled) {
+      const indexOfLastHandledNotif = unreadFavNotifications.indexOf(
+        (notif) => notif.id === lastNotificationHandled
+      );
+      if (indexOfLastHandledNotif !== -1) {
+        unreadFavNotifications = unreadFavNotifications.slice(
+          0,
+          indexOfLastHandledNotif
+        );
+      }
+    }
+
     unreadFavNotifications = unreadFavNotifications.map((notif) => ({
       ...notif,
       senderUserId: extractNotifSenderUserId(notif),
@@ -146,6 +157,7 @@ async function sendMessageToAllFavers({
 
     const csrf_token = document.head.querySelector("[name=csrf-token]").content;
     if (csrf_token) {
+      let tempLastNotifHandledId = lastNotificationHandled;
       await asyncForEach(unreadFavNotifications, async (notif) => {
         const msgThreadId = await getMsgThreadId({
           itemId: notif.subject_id,
