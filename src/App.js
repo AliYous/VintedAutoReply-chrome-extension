@@ -1,9 +1,20 @@
 /* eslint-disable no-undef */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
   const [messageContent, setMessageContent] = useState("");
+
+  useEffect(
+    () =>
+      chrome.storage.local.get(
+        ["lastNotificationHandled", "messageContent"],
+        function (items) {
+          setMessageContent(items.messageContent);
+        }
+      ),
+    []
+  );
 
   const handleClick = () => {
     chrome.storage.local.set({ messageContent: messageContent }, () => {
@@ -27,7 +38,7 @@ function App() {
       <button
         className="startSendButton"
         onClick={handleClick}
-        disabled={messageContent.length < 10}
+        disabled={!messageContent && messageContent.length < 10}
       >
         <span className="buttonText">Start Sending</span>
       </button>
