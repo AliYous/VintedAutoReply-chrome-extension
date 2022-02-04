@@ -192,7 +192,7 @@ chrome.storage.local.get(
         deleteEachConvo: items.deleteEachConvo,
       });
       chrome.runtime.sendMessage({
-        message: "autoSendExecutedSuccess",
+        msg: "autoSendExecutedSuccess",
       });
     } catch (err) {
       console.log(err);
