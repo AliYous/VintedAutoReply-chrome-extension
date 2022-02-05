@@ -126,32 +126,6 @@ function App() {
         </Button>
       </Grid>
     </Grid>
-    // <div>
-    //   <input
-    //     label="Contenu du message"
-    //     onChange={handleChange}
-    //     value={messageContent}
-    //     className="input"
-    //   />
-    //   <input
-    //     type="checkbox"
-    //     id="deleteEachConvo"
-    //     name="Delete conversations after sending message"
-    //     checked={deleteEachConvo}
-    //     onClick={handleDeleteConvCheckboxClick}
-    //   />
-    //   <button
-    //     className="startSendButton"
-    //     onClick={handleClick}
-    //     disabled={!messageContent && messageContent.length < 10}
-    //   >
-    //     {sendingMessages ? (
-    //       <span className="buttonText">Loading....</span>
-    //     ) : (
-    //       <span className="buttonText">Start Sending</span>
-    //     )}
-    //   </button>
-    // </div>
   );
 }
 
