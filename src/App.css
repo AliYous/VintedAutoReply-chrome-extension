@@ -1,0 +1,30 @@
+.App {
+}
+
+.header {
+  min-height: 62px;
+  padding-left: 15px;
+  border-top: 1px solid #edf1f3;
+}
+
+.logo {
+  max-height: 40px;
+  max-width: auto;
+}
+
+.deleteMessagesToggleRow {
+  border-top: 1px solid #edf1f3;
+  min-height: 57px;
+  padding: 0 15px;
+}
+
+.textField {
+  width: 97%;
+  height: 90%;
+}
+
+.startSendButton {
+  background-color: #3382f7;
+  color: white;
+  min-width: 98%;
+}

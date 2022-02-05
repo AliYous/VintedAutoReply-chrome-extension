@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+import { Button, Grid, Switch, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import "./App.css";
 
@@ -43,36 +44,114 @@ function App() {
     sender,
     sendResponse
   ) {
+    // When receive auto send executed success
     setSendingMessages(false);
   });
 
   return (
-    <div>
-      <input
-        label="Contenu du message"
-        onChange={handleChange}
-        value={messageContent}
-        className="input"
-      />
-      <input
-        type="checkbox"
-        id="deleteEachConvo"
-        name="Delete conversations after sending message"
-        checked={deleteEachConvo}
-        onClick={handleDeleteConvCheckboxClick}
-      />
-      <button
-        className="startSendButton"
-        onClick={handleClick}
-        disabled={!messageContent && messageContent.length < 10}
+    <Grid container direction="column" className="App">
+      <Grid
+        container
+        item
+        xs={12}
+        className="header"
+        justifyContent="flex-start"
+        alignItems="center"
       >
-        {sendingMessages ? (
-          <span className="buttonText">Loading....</span>
-        ) : (
-          <span className="buttonText">Start Sending</span>
-        )}
-      </button>
-    </div>
+        <img src="images/vintmate-logo.png" alt={"logo"} className="logo" />
+      </Grid>
+
+      <Grid
+        container
+        item
+        xs={12}
+        justifyContent="space-between"
+        alignItems="center"
+        className="deleteMessagesToggleRow"
+      >
+        <Grid item>
+          <Typography className="deleteMessagesToggleText">
+            Supprimer les conversations après envoi
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Switch
+            defaultChecked={deleteEachConvo}
+            onClick={handleDeleteConvCheckboxClick}
+          />
+        </Grid>
+      </Grid>
+
+      <Grid
+        container
+        item
+        xs={12}
+        justifyContent="center"
+        alignItems="center"
+        alignContent="center"
+        className="textFieldRow"
+      >
+        <TextField
+          id="outlined-multiline-static"
+          placeholder="Contenu du message - exemple: Hey je vois que tu as liké mon article, toujours intéressée ?"
+          multiline
+          rows={4}
+          defaultValue={messageContent}
+          value={messageContent}
+          onChange={handleChange}
+          className="textField"
+        />
+      </Grid>
+      <Grid
+        container
+        item
+        xs={12}
+        mt={2}
+        justifyContent="center"
+        alignItems="center"
+        alignContent="center"
+        className="buttonRow"
+      >
+        <Button
+          className="startSendButton"
+          variant="contained"
+          onClick={handleClick}
+          disabled={!messageContent && messageContent.length < 10}
+        >
+          {sendingMessages ? (
+            <span className="buttonText">Envoi en cours ...</span>
+          ) : (
+            <span className="buttonText">Commencer l'envoi</span>
+          )}
+        </Button>
+      </Grid>
+    </Grid>
+    // <div>
+    //   <input
+    //     label="Contenu du message"
+    //     onChange={handleChange}
+    //     value={messageContent}
+    //     className="input"
+    //   />
+    //   <input
+    //     type="checkbox"
+    //     id="deleteEachConvo"
+    //     name="Delete conversations after sending message"
+    //     checked={deleteEachConvo}
+    //     onClick={handleDeleteConvCheckboxClick}
+    //   />
+    //   <button
+    //     className="startSendButton"
+    //     onClick={handleClick}
+    //     disabled={!messageContent && messageContent.length < 10}
+    //   >
+    //     {sendingMessages ? (
+    //       <span className="buttonText">Loading....</span>
+    //     ) : (
+    //       <span className="buttonText">Start Sending</span>
+    //     )}
+    //   </button>
+    // </div>
   );
 }
 
