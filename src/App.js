@@ -9,14 +9,25 @@ function App() {
   const [sendingMessages, setSendingMessages] = useState(false);
 
   useEffect(
-    () =>
+    () => {
       chrome.storage.local.get(
         ["messageContent", "deleteEachConvo"],
         (items) => {
           setMessageContent(items.messageContent);
           setDeleteEachConvo(items.deleteEachConvo);
         }
-      ),
+      );
+
+      chrome.runtime.onMessage.addListener(function (
+        message,
+        sender,
+        sendResponse
+      ) {
+        if (message.msg == "autoSendExecutedSuccess") {
+          setSendingMessages(false);
+        }
+      });
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
@@ -39,15 +50,6 @@ function App() {
       setDeleteEachConvo(!deleteEachConvo);
     });
   };
-
-  chrome.runtime.onMessage.addListener(function (
-    message,
-    sender,
-    sendResponse
-  ) {
-    // When receive auto send executed success
-    setSendingMessages(false);
-  });
 
   return (
     <Grid container direction="column" className="App">
