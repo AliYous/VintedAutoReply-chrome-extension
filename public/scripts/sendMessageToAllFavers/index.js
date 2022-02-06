@@ -144,28 +144,28 @@ async function sendMessageToAllFavers({
     notif.link.includes("want_it")
   );
 
-  // let unreadFavNotifications = favNotifications?.filter(
-  //   (notif) => !notif.is_read
-  // );
-  let unreadFavNotifications = favNotifications; // Delete and uncomment above line
+  let unreadFavNotifications = favNotifications?.filter(
+    (notif) => !notif.is_read
+  );
 
   if (!unreadFavNotifications || unreadFavNotifications.length === 0) {
     console.log("no unread notifications");
     return null;
   }
 
-  // if (lastNotificationHandled) {
-  //   const indexOfLastHandledNotif = unreadFavNotifications.findIndex(
-  //     (notif) => notif.id === lastNotificationHandled
-  //   );
+  if (lastNotificationHandled) {
+    const indexOfLastHandledNotif = unreadFavNotifications.findIndex(
+      (notif) => notif.id === lastNotificationHandled
+    );
 
-  //   if (indexOfLastHandledNotif !== -1) {
-  //     unreadFavNotifications = unreadFavNotifications.slice(
-  //       0,
-  //       indexOfLastHandledNotif
-  //     );
-  //   }
-  // }
+    if (indexOfLastHandledNotif !== -1) {
+      unreadFavNotifications = unreadFavNotifications.slice(
+        0,
+        indexOfLastHandledNotif
+      );
+    }
+  }
+
   if (!unreadFavNotifications || unreadFavNotifications.length === 0) {
     console.log("All Notifications have already been handled");
     return null;
