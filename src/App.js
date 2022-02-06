@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable no-undef */
 import { Button, Grid, Switch, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";

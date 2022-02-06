@@ -8,8 +8,6 @@ async function sendMessageToAllFavers({
   deleteEachConvo,
 }) {
   const allNotifications = await globalThis.fetchAllNotifications();
-  console.log("deleteEachConvo");
-  console.log(deleteEachConvo);
 
   if (!allNotifications) {
     return null;
