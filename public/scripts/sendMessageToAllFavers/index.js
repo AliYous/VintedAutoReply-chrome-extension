@@ -83,11 +83,6 @@ async function sendMessageToAllFavers({
     );
     return null;
   }
-  //   else {
-  //   console.log(
-  //     "No notifications were found or all notifications have already been handled"
-  //   );
-  // }
 }
 
 chrome.storage.local.get(
