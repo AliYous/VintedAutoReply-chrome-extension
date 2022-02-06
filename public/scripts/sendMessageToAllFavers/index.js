@@ -1,16 +1,13 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-undef */
 /* eslint-disable no-undef */
-// Sends a message to anyone who faved one of user's products
 
 async function fetchAllNotifications() {
-  // returns all notifications that involve favorites
   try {
     const notificationsUrl = `https://www.vinted.fr/api/v2/notifications`;
     const stream = await fetch(notificationsUrl);
     const jsonData = await stream.json();
     const allNotifications = jsonData.notifications;
-    // Extract recipient user id from notification.body (regex)
     return allNotifications;
   } catch (e) {
     console.log(e);
