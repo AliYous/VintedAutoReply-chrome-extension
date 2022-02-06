@@ -14,6 +14,7 @@ function App() {
         ["messageContent", "deleteEachConvo"],
         (items) => {
           setMessageContent(items.messageContent);
+          setDeleteEachConvo(items.deleteEachConvo);
         }
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,7 +77,7 @@ function App() {
         </Grid>
         <Grid item>
           <Switch
-            defaultChecked={deleteEachConvo}
+            checked={deleteEachConvo}
             onClick={handleDeleteConvCheckboxClick}
           />
         </Grid>

@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable no-undef */
 /* eslint-disable no-undef */
 // Sends a message to anyone who faved one of user's products
@@ -41,10 +42,10 @@ async function getMsgThreadId({ itemId, msgRecipientId }) {
 async function sendMessageByQuery({
   currentUserId,
   msgThreadId,
-  messageContent = "Hey salut tu as fav mon article, tu es intéressé ?",
+  messageContent,
   csrf_token,
 }) {
-  fetch(
+  await fetch(
     `https://www.vinted.fr/api/v2/users/${currentUserId}/msg_threads/${msgThreadId}`,
     {
       headers: {
@@ -71,7 +72,11 @@ async function sendMessageByQuery({
       return await response.json();
     })
     .then((data) => {
+      console.log("Sent message");
       return data;
+    })
+    .catch((err) => {
+      console.log("error when sending message", err);
     });
 }
 
@@ -80,7 +85,7 @@ async function deleteMessageThreadId({
   msgThreadId,
   csrf_token,
 }) {
-  fetch(
+  await fetch(
     `https://www.vinted.fr/api/v2/users/${currentUserId}/msg_threads/${msgThreadId}`,
     {
       headers: {
@@ -97,6 +102,7 @@ async function deleteMessageThreadId({
       },
       referrer: `https://www.vinted.fr/inbox/${msgThreadId}`,
       referrerPolicy: "strict-origin-when-cross-origin",
+      body: null,
       method: "DELETE",
       mode: "cors",
       credentials: "include",
@@ -106,14 +112,12 @@ async function deleteMessageThreadId({
       return await response.json();
     })
     .then((data) => {
+      console.log("Deleted conversation");
       return data;
+    })
+    .catch((err) => {
+      console.log("Error when deleting message", err);
     });
-}
-
-function getStorageValuePromise(key) {
-  return new Promise((resolve) => {
-    chrome.storage.local.get(key, resolve());
-  });
 }
 
 async function saveToStoragePromise(key, value) {
@@ -129,69 +133,88 @@ async function sendMessageToAllFavers({
   deleteEachConvo,
 }) {
   const allNotifications = await fetchAllNotifications();
+  console.log("deleteEachConvo");
+  console.log(deleteEachConvo);
+
+  if (!allNotifications) {
+    return null;
+  }
 
   let favNotifications = allNotifications.filter((notif) =>
     notif.link.includes("want_it")
   );
 
-  let unreadFavNotifications = favNotifications.filter((notif) => !notif.read);
+  // let unreadFavNotifications = favNotifications?.filter(
+  //   (notif) => !notif.is_read
+  // );
+  let unreadFavNotifications = favNotifications; // Delete and uncomment above line
 
-  if (unreadFavNotifications.length > 0) {
-    if (lastNotificationHandled) {
-      const indexOfLastHandledNotif = unreadFavNotifications.indexOf(
-        (notif) => notif.id === lastNotificationHandled
-      );
-      if (indexOfLastHandledNotif !== -1) {
-        unreadFavNotifications = unreadFavNotifications.slice(
-          0,
-          indexOfLastHandledNotif
-        );
-      }
-    }
-
-    unreadFavNotifications = unreadFavNotifications.map((notif) => ({
-      ...notif,
-      senderUserId: extractNotifSenderUserId(notif),
-    }));
-    const currentUserId = unreadFavNotifications[0].user_id;
-
-    const csrf_token = document.head.querySelector("[name=csrf-token]").content;
-    if (csrf_token) {
-      let tempLastNotifHandledId = lastNotificationHandled;
-      await asyncForEach(unreadFavNotifications, async (notif) => {
-        const msgThreadId = await getMsgThreadId({
-          itemId: notif.subject_id,
-          msgRecipientId: notif.senderUserId,
-        });
-
-        // await sendMessageByQuery({
-        //   currentUserId: currentUserId,
-        //   msgThreadId: msgThreadId,
-        //   csrf_token: csrf_token,
-        // messageContent: messageContent,
-        // });
-
-        if (deleteEachConvo) {
-          // await deleteMessageThreadId({
-          //   currentUserId: currentUserId,
-          //   msgThreadId: msgThreadId,
-          //   csrf_token: csrf_token,
-          // });
-        }
-
-        tempLastNotifHandledId = notif.id;
-      });
-      await saveToStoragePromise(
-        "lastNotificationHandled",
-        tempLastNotifHandledId
-      );
-      return null;
-    }
-  } else {
-    console.log(
-      "No notifications were found or all notifications have already been handled"
-    );
+  if (!unreadFavNotifications || unreadFavNotifications.length === 0) {
+    console.log("no unread notifications");
+    return null;
   }
+
+  // if (lastNotificationHandled) {
+  //   const indexOfLastHandledNotif = unreadFavNotifications.findIndex(
+  //     (notif) => notif.id === lastNotificationHandled
+  //   );
+
+  //   if (indexOfLastHandledNotif !== -1) {
+  //     unreadFavNotifications = unreadFavNotifications.slice(
+  //       0,
+  //       indexOfLastHandledNotif
+  //     );
+  //   }
+  // }
+  if (!unreadFavNotifications || unreadFavNotifications.length === 0) {
+    console.log("All Notifications have already been handled");
+    return null;
+  }
+
+  unreadFavNotifications = unreadFavNotifications.map((notif) => ({
+    ...notif,
+    senderUserId: extractNotifSenderUserId(notif),
+  }));
+
+  const currentUserId = unreadFavNotifications[0].user_id;
+
+  const csrf_token = document.head.querySelector("[name=csrf-token]").content;
+  if (csrf_token) {
+    let tempLastNotifHandledId;
+    await asyncForEach(unreadFavNotifications, async (notif) => {
+      const msgThreadId = await getMsgThreadId({
+        itemId: notif.subject_id,
+        msgRecipientId: notif.senderUserId,
+      });
+
+      await sendMessageByQuery({
+        currentUserId: currentUserId,
+        msgThreadId: msgThreadId,
+        csrf_token: csrf_token,
+        messageContent: messageContent,
+      });
+
+      if (deleteEachConvo) {
+        await deleteMessageThreadId({
+          currentUserId: currentUserId,
+          msgThreadId: msgThreadId,
+          csrf_token: csrf_token,
+        });
+      }
+
+      tempLastNotifHandledId = notif.id;
+    });
+    await saveToStoragePromise(
+      "lastNotificationHandled",
+      tempLastNotifHandledId
+    );
+    return null;
+  }
+  //   else {
+  //   console.log(
+  //     "No notifications were found or all notifications have already been handled"
+  //   );
+  // }
 }
 
 chrome.storage.local.get(
