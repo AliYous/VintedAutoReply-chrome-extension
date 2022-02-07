@@ -15,9 +15,7 @@ const SignInModule = ({ setSignupOrSignin }) => {
       console.log(error.message);
     }
   };
-  const handleSignOut = async () => {
-    await signOut(auth);
-  };
+
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
   };
@@ -88,9 +86,6 @@ const SignInModule = ({ setSignupOrSignin }) => {
           Sign In
         </Button>
 
-        <Button variant="outlined" onClick={handleSignOut} xs={5}>
-          Sign Out
-        </Button>
         <p className="authRedirectText" onClick={redirectToSignUp}>
           Or Create an account
         </p>
