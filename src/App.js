@@ -2,7 +2,7 @@
 /* eslint-disable no-undef */
 import { Backdrop, CircularProgress, Grid } from "@mui/material";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./App.css";
 import { auth } from "./firebaseConfig";
 import AuthModule from "./modules/Authentication";

@@ -22,6 +22,7 @@ const AutoSendMessagesModule = () => {
         sender,
         sendResponse
       ) {
+        // eslint-disable-next-line
         if (message.msg == "autoSendExecutedSuccess") {
           setSendingMessages(false);
         }
