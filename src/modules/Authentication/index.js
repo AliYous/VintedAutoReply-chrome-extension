@@ -1,18 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SignInModule from "./SignInModule";
-import SignUpModule from "./SignUpModule";
+// import SignUpModule from "./SignUpModule";
 
 const AuthModule = () => {
   const [signupOrSignin, setSignupOrSignin] = useState("signin");
-
+  useEffect(() => {
+    console.log(signupOrSignin);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <>
-      {signupOrSignin === "signin" && (
+      <SignInModule setSignupOrSignin={setSignupOrSignin} />
+      {/* {signupOrSignin === "signin" && (
         <SignInModule setSignupOrSignin={setSignupOrSignin} />
       )}
       {signupOrSignin === "signup" && (
         <SignUpModule setSignupOrSignin={setSignupOrSignin} />
-      )}
+      )} */}
     </>
   );
 };
