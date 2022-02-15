@@ -61,23 +61,32 @@ async function sendMessageToAllFavers({
       });
 
       await globalThis.randomTimeout(400, 900);
-      await globalThis.sendMessageByQuery({
-        currentUserId: currentUserId,
-        msgThreadId: msgThreadId,
-        csrf_token: csrf_token,
-        messageContent: messageContent,
-      });
-
-      if (deleteEachConvo) {
-        await globalThis.randomTimeout(1300, 2500);
-        await globalThis.deleteMessageThreadId({
+      const conversationHasMessages =
+        await globalThis.checkConversationHasMessages({
           currentUserId: currentUserId,
           msgThreadId: msgThreadId,
           csrf_token: csrf_token,
         });
-      }
 
-      tempLastNotifHandledId = notif.id;
+      // Do not send message if the conv was already started
+      if (!conversationHasMessages) {
+        await globalThis.sendMessageByQuery({
+          currentUserId: currentUserId,
+          msgThreadId: msgThreadId,
+          csrf_token: csrf_token,
+          messageContent: messageContent,
+        });
+
+        if (deleteEachConvo) {
+          await globalThis.randomTimeout(1300, 2500);
+          await globalThis.deleteMessageThreadId({
+            currentUserId: currentUserId,
+            msgThreadId: msgThreadId,
+            csrf_token: csrf_token,
+          });
+        }
+        tempLastNotifHandledId = notif.id;
+      }
     });
     await globalThis.saveToStoragePromise(
       "lastNotificationHandled",

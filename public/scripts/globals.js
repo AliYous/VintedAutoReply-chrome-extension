@@ -52,6 +52,51 @@ globalThis.getMsgThreadId = async function ({ itemId, msgRecipientId }) {
 };
 
 // eslint-disable-next-line no-undef
+globalThis.checkConversationHasMessages = async function ({
+  currentUserId,
+  msgThreadId,
+  csrf_token,
+}) {
+  await fetch(
+    `https://www.vinted.fr/api/v2/users/${currentUserId}/msg_threads/${msgThreadId}`,
+    {
+      headers: {
+        accept: "application/json, text/plain, */*",
+        "accept-language": "fr",
+        "content-type": "application/json",
+        "sec-ch-ua": '"Chromium";v="96", "Opera";v="82", ";Not A Brand";v="99"',
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": '"macOS"',
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "x-csrf-token": `${csrf_token}`,
+      },
+      referrer: `https://www.vinted.fr/inbox/${msgThreadId}`,
+      referrerPolicy: "strict-origin-when-cross-origin",
+      body: null,
+      method: "GET",
+      mode: "cors",
+      credentials: "include",
+    }
+  )
+    .then(async (response) => {
+      return await response.json();
+    })
+    .then((data) => {
+      const { msg_thread: messageThread } = data;
+      let threadContainsMessages = false;
+      if (messageThread.messages.length > 0) {
+        threadContainsMessages = true;
+      }
+      return threadContainsMessages;
+    })
+    .catch((err) => {
+      console.log("error when checking if conversation contains messages", err);
+    });
+};
+
+// eslint-disable-next-line no-undef
 globalThis.sendMessageByQuery = async function ({
   currentUserId,
   msgThreadId,
