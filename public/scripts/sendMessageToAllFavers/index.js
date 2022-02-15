@@ -60,6 +60,7 @@ async function sendMessageToAllFavers({
         msgRecipientId: notif.senderUserId,
       });
 
+      await globalThis.randomTimeout(400, 900);
       await globalThis.sendMessageByQuery({
         currentUserId: currentUserId,
         msgThreadId: msgThreadId,
@@ -68,6 +69,7 @@ async function sendMessageToAllFavers({
       });
 
       if (deleteEachConvo) {
+        await globalThis.randomTimeout(1300, 2500);
         await globalThis.deleteMessageThreadId({
           currentUserId: currentUserId,
           msgThreadId: msgThreadId,

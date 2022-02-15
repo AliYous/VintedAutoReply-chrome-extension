@@ -6,6 +6,13 @@ globalThis.asyncForEach = async function (array, callback) {
 };
 
 // eslint-disable-next-line no-undef
+globalThis.randomTimeout = async function (min, max) {
+  let num = Math.random() * (max - min) + min;
+  let ms = Math.round(num);
+  return new Promise((res) => setTimeout(res, ms));
+};
+
+// eslint-disable-next-line no-undef
 globalThis.saveToStoragePromise = async function (key, value) {
   return new Promise((resolve) => {
     // eslint-disable-next-line no-undef
