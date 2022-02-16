@@ -54,6 +54,7 @@ async function sendMessageToAllFavers({
   const csrf_token = document.head.querySelector("[name=csrf-token]").content;
   if (csrf_token) {
     let tempLastNotifHandledId;
+
     await globalThis.asyncForEach(unreadFavNotifications, async (notif) => {
       const msgThreadId = await globalThis.getMsgThreadId({
         itemId: notif.subject_id,
@@ -69,24 +70,26 @@ async function sendMessageToAllFavers({
         });
 
       // Do not send message if the conv was already started
-      if (!conversationHasMessages) {
-        await globalThis.sendMessageByQuery({
+      if (conversationHasMessages) {
+        return;
+      }
+
+      await globalThis.sendMessageByQuery({
+        currentUserId: currentUserId,
+        msgThreadId: msgThreadId,
+        csrf_token: csrf_token,
+        messageContent: messageContent,
+      });
+
+      if (deleteEachConvo) {
+        await globalThis.randomTimeout(1300, 2500);
+        await globalThis.deleteMessageThreadId({
           currentUserId: currentUserId,
           msgThreadId: msgThreadId,
           csrf_token: csrf_token,
-          messageContent: messageContent,
         });
-
-        if (deleteEachConvo) {
-          await globalThis.randomTimeout(1300, 2500);
-          await globalThis.deleteMessageThreadId({
-            currentUserId: currentUserId,
-            msgThreadId: msgThreadId,
-            csrf_token: csrf_token,
-          });
-        }
-        tempLastNotifHandledId = notif.id;
       }
+      tempLastNotifHandledId = notif.id;
     });
     await globalThis.saveToStoragePromise(
       "lastNotificationHandled",
