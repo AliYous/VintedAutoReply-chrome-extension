@@ -135,8 +135,12 @@ globalThis.checkConversationHasMessages = async function ({
     })
     .then((data) => {
       const { msg_thread: messageThread } = data;
+      const { messages } = messageThread;
       let threadContainsMessages = false;
-      if (messageThread.messages.length > 0) {
+      if (
+        messages.length > 0 &&
+        messages.find((msg) => msg.entity_type === "message")
+      ) {
         threadContainsMessages = true;
       }
       return threadContainsMessages;

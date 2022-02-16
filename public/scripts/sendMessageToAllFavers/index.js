@@ -69,6 +69,7 @@ async function sendMessageToAllFavers({
           productsList: userProducts,
         });
         if (isProductReserved) {
+          console.log("product is reserved");
           return;
         }
       }
@@ -88,6 +89,7 @@ async function sendMessageToAllFavers({
 
       // Do not send message if the conv was already started
       if (conversationHasMessages) {
+        console.log("Conversation skipped - already has messages");
         return;
       }
 
