@@ -57,7 +57,7 @@ globalThis.checkConversationHasMessages = async function ({
   msgThreadId,
   csrf_token,
 }) {
-  await fetch(
+  return await fetch(
     `https://www.vinted.fr/api/v2/users/${currentUserId}/msg_threads/${msgThreadId}`,
     {
       headers: {
