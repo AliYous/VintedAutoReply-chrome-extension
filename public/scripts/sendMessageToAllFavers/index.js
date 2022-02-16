@@ -52,10 +52,27 @@ async function sendMessageToAllFavers({
   const currentUserId = unreadFavNotifications[0].user_id;
 
   const csrf_token = document.head.querySelector("[name=csrf-token]").content;
+
+  const userProducts = await globalThis.getUserSellingProducts({
+    currentUserId: currentUserId,
+    csrf_token: csrf_token,
+  });
+
   if (csrf_token) {
     let tempLastNotifHandledId;
 
     await globalThis.asyncForEach(unreadFavNotifications, async (notif) => {
+      // Continue only if product is not reserved
+      if (userProducts && userProducts.length > 0) {
+        const isProductReserved = globalThis.checkIsProductReserved({
+          productId: notif.subject_id,
+          productsList: userProducts,
+        });
+        if (isProductReserved) {
+          return;
+        }
+      }
+
       const msgThreadId = await globalThis.getMsgThreadId({
         itemId: notif.subject_id,
         msgRecipientId: notif.senderUserId,

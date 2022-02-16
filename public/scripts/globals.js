@@ -42,6 +42,56 @@ globalThis.extractNotifSenderUserId = function (notification) {
 };
 
 // eslint-disable-next-line no-undef
+globalThis.checkIsProductReserved = function ({ productId, productsList }) {
+  const product = productsList.find((item) => item.id === productId);
+  let isReserved = false;
+  if (product.is_reserved) {
+    isReserved = true;
+  }
+  return isReserved;
+};
+
+// eslint-disable-next-line no-undef
+globalThis.getUserSellingProducts = async function ({
+  currentUserId,
+  csrf_token,
+}) {
+  return await fetch(
+    `https://www.vinted.fr/api/v2/users/${currentUserId}/items?page=1&per_page=99`,
+    {
+      headers: {
+        accept: "application/json, text/plain, */*",
+        "accept-language": "fr",
+        "if-none-match": 'W/"b0823c71ed556258754ec85c4cab7a9c"',
+        "sec-ch-ua": '"Opera";v="83", "Chromium";v="97", ";Not A Brand";v="99"',
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": '"macOS"',
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "x-csrf-token": `${csrf_token}`,
+      },
+      referrer: `https://www.vinted.fr/member/${currentUserId}`,
+      referrerPolicy: "strict-origin-when-cross-origin",
+      body: null,
+      method: "GET",
+      mode: "cors",
+      credentials: "include",
+    }
+  )
+    .then(async (response) => {
+      return await response.json();
+    })
+    .then((data) => {
+      const { items } = data;
+      return items;
+    })
+    .catch((err) => {
+      console.log("Error when fetching user products", err);
+    });
+};
+
+// eslint-disable-next-line no-undef
 globalThis.getMsgThreadId = async function ({ itemId, msgRecipientId }) {
   const res = await fetch(
     `https://www.vinted.fr/items/${itemId}/want_it/new?offering_id=${msgRecipientId}`
