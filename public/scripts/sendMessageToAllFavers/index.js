@@ -6,42 +6,48 @@ async function sendMessageToAllFavers({
   lastNotificationHandled,
   messageContent,
   deleteEachConvo,
+  notificationsToHandle = null, // Can pass in an array of notifs to handle instead of fetching it (used for retry after fail)
 }) {
-  const allNotifications = await globalThis.fetchAllNotifications();
+  let unreadFavNotifications = [];
+  if (!notificationsToHandle) {
+    const allNotifications = await globalThis.fetchAllNotifications();
 
-  if (!allNotifications) {
-    return null;
-  }
+    if (!allNotifications) {
+      return null;
+    }
 
-  let favNotifications = allNotifications.filter((notif) =>
-    notif.link.includes("want_it")
-  );
-
-  let unreadFavNotifications = favNotifications?.filter(
-    (notif) => !notif.is_read
-  );
-
-  if (!unreadFavNotifications || unreadFavNotifications.length === 0) {
-    console.log("no unread notifications");
-    return null;
-  }
-
-  if (lastNotificationHandled) {
-    const indexOfLastHandledNotif = unreadFavNotifications.findIndex(
-      (notif) => notif.id === lastNotificationHandled
+    let favNotifications = allNotifications.filter((notif) =>
+      notif.link.includes("want_it")
     );
 
-    if (indexOfLastHandledNotif !== -1) {
-      unreadFavNotifications = unreadFavNotifications.slice(
-        0,
-        indexOfLastHandledNotif
-      );
-    }
-  }
+    unreadFavNotifications = favNotifications?.filter(
+      (notif) => !notif.is_read
+    );
 
-  if (!unreadFavNotifications || unreadFavNotifications.length === 0) {
-    console.log("All Notifications have already been handled");
-    return null;
+    if (!unreadFavNotifications || unreadFavNotifications.length === 0) {
+      console.log("no unread notifications");
+      return null;
+    }
+
+    if (lastNotificationHandled) {
+      const indexOfLastHandledNotif = unreadFavNotifications.findIndex(
+        (notif) => notif.id === lastNotificationHandled
+      );
+
+      if (indexOfLastHandledNotif !== -1) {
+        unreadFavNotifications = unreadFavNotifications.slice(
+          0,
+          indexOfLastHandledNotif
+        );
+      }
+    }
+
+    if (!unreadFavNotifications || unreadFavNotifications.length === 0) {
+      console.log("All Notifications have already been handled");
+      return null;
+    }
+  } else {
+    unreadFavNotifications = notificationsToHandle;
   }
 
   unreadFavNotifications = unreadFavNotifications.map((notif) => ({
@@ -60,7 +66,7 @@ async function sendMessageToAllFavers({
 
   if (csrf_token) {
     let tempLastNotifHandledId;
-
+    const failedNotifications = [];
     await globalThis.asyncForEach(unreadFavNotifications, async (notif) => {
       // Continue only if product is not reserved
       if (userProducts && userProducts.length > 0) {
@@ -114,7 +120,7 @@ async function sendMessageToAllFavers({
       "lastNotificationHandled",
       tempLastNotifHandledId
     );
-    return null;
+    return { failedNotifications: failedNotifications };
   }
 }
 
@@ -122,11 +128,21 @@ chrome.storage.local.get(
   ["lastNotificationHandled", "messageContent", "deleteEachConvo"],
   async (items) => {
     try {
-      await sendMessageToAllFavers({
+      const { failedNotifications } = await sendMessageToAllFavers({
         lastNotificationHandled: items.lastNotificationHandled,
         messageContent: items.messageContent,
         deleteEachConvo: items.deleteEachConvo,
       });
+      if (failedNotifications.length > 0) {
+        // recalling the function with notificationsToHandle param to retry failed notifs
+        await sendMessageToAllFavers({
+          lastNotificationHandled: items.lastNotificationHandled,
+          messageContent: items.messageContent,
+          deleteEachConvo: items.deleteEachConvo,
+          notificationsToHandle: failedNotifications,
+        });
+      }
+
       chrome.runtime.sendMessage({
         msg: "autoSendExecutedSuccess",
       });
