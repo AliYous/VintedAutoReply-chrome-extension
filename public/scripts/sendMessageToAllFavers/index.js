@@ -120,20 +120,21 @@ async function sendMessageToAllFavers({
       "lastNotificationHandled",
       tempLastNotifHandledId
     );
-    return { failedNotifications: failedNotifications };
   }
+  return { failedNotifications: [{ id: 123 }] };
 }
 
 chrome.storage.local.get(
   ["lastNotificationHandled", "messageContent", "deleteEachConvo"],
   async (items) => {
     try {
-      const { failedNotifications } = await sendMessageToAllFavers({
+      const { failedNotifications = null } = await sendMessageToAllFavers({
         lastNotificationHandled: items.lastNotificationHandled,
         messageContent: items.messageContent,
         deleteEachConvo: items.deleteEachConvo,
       });
-      if (failedNotifications.length > 0) {
+
+      if (failedNotifications && failedNotifications.length > 0) {
         // recalling the function with notificationsToHandle param to retry failed notifs
         await sendMessageToAllFavers({
           lastNotificationHandled: items.lastNotificationHandled,
