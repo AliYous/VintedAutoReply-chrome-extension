@@ -143,10 +143,14 @@ globalThis.checkConversationHasMessages = async function ({
       ) {
         threadContainsMessages = true;
       }
-      return threadContainsMessages;
+      return { result: threadContainsMessages, error: null };
     })
     .catch((err) => {
-      console.log("error when checking if conversation contains messages", err);
+      console.log(
+        "error when checking if conversation contains messages",
+        err.message
+      );
+      return { result: null, error: err };
     });
 };
 

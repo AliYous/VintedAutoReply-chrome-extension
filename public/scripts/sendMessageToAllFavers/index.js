@@ -86,13 +86,17 @@ async function sendMessageToAllFavers({
       });
 
       await globalThis.randomTimeout(400, 900);
-      const conversationHasMessages =
+      const { result: conversationHasMessages, error } =
         await globalThis.checkConversationHasMessages({
           currentUserId: currentUserId,
           msgThreadId: msgThreadId,
           csrf_token: csrf_token,
         });
 
+      if (error) {
+        failedNotifications.push(notif);
+        return;
+      }
       // Do not send message if the conv was already started
       if (conversationHasMessages) {
         console.log("Conversation skipped - already has messages");
@@ -120,8 +124,8 @@ async function sendMessageToAllFavers({
       "lastNotificationHandled",
       tempLastNotifHandledId
     );
+    return { failedNotifications: failedNotifications };
   }
-  return { failedNotifications: [{ id: 123 }] };
 }
 
 chrome.storage.local.get(
