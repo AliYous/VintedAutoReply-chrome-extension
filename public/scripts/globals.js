@@ -37,7 +37,7 @@ globalThis.fetchAllNotifications = async function () {
 globalThis.extractNotifSenderUserId = function (notification) {
   const { body } = notification;
   const bodyUrl = body.match(/\bhttps?:\/\/\S+/gi)[0];
-  const notifSenderId = bodyUrl.replace(/\D/g, ""); // filter recipient id from url
+  const notifSenderId = bodyUrl.match(/member\/(.*)/)[1].substring(0, 8); // filter recipient id from url
   return parseInt(notifSenderId);
 };
 
