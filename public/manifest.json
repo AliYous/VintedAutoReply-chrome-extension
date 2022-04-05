@@ -4,6 +4,7 @@
   "version": "1.0",
   "description": "Send a pre-written message to anyone who favs your item on vinted and increase your sales - with no extra work",
   "permissions": ["storage", "tabs", "https://*/*", "http://*/*", "cookies"],
+  "content_security_policy": "script-src 'self' https://*.whop.com https://whop.com https://*.jquery.com; object-src 'self'",
   "browser_action": {
     "default_icon": "logo192.png",
     "default_title": "Open extension",

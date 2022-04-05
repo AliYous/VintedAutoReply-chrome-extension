@@ -1,29 +1,15 @@
-import { Button, Grid, TextField } from "@mui/material";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { Button, Grid } from "@mui/material";
 import React, { useState } from "react";
-import { auth } from "../../firebaseConfig";
 
 const SignInModule = ({ setSignupOrSignin }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // eslint-disable-next-line no-undef
+  let whop = new window.Whop("bb43d1070bdd751d2adc44bae31fff8466f2f46a9c");
 
-  const handleSignIn = async () => {
-    try {
-      const user = await signInWithEmailAndPassword(auth, email, password);
-      console.log(user);
-    } catch (error) {
-      console.log(error.message);
-    }
+  const handleSignInClick = async () => {
+    let user = await whop.login();
+    let name = user["name"];
+    console.log(user);
   };
-
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
-  };
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
-
-  const redirectToSignUp = () => setSignupOrSignin("signup");
 
   return (
     <Grid
@@ -42,53 +28,9 @@ const SignInModule = ({ setSignupOrSignin }) => {
         alignItems="center"
         alignContent="center"
       >
-        <h1>Sign In</h1>
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        mt={1}
-        mb={1}
-        alignItems="center"
-        alignContent="center"
-      >
-        <TextField
-          placeholder="Email"
-          defaultValue={email}
-          value={email}
-          onChange={handleEmailChange}
-        />
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        mt={1}
-        mb={1}
-        alignItems="center"
-        alignContent="center"
-      >
-        <TextField
-          placeholder="Password"
-          defaultValue={password}
-          value={password}
-          onChange={handlePasswordChange}
-        />
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        mt={1}
-        mb={1}
-        alignItems="center"
-        alignContent="center"
-      >
-        <Button variant="contained" onClick={handleSignIn} xs={5}>
+        <Button variant="contained" onClick={handleSignInClick} xs={5}>
           Sign In
         </Button>
-
-        <p className="authRedirectText" onClick={redirectToSignUp}>
-          Or Create an account
-        </p>
       </Grid>
     </Grid>
   );
