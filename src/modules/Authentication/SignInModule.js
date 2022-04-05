@@ -3,11 +3,14 @@ import React, { useState } from "react";
 
 const SignInModule = ({ setSignupOrSignin }) => {
   // eslint-disable-next-line no-undef
-  let whop = new window.Whop("bb43d1070bdd751d2adc44bae31fff8466f2f46a9c");
+  let whop = new Whop("bb43d1070bdd751d2adc44bae31fff8466f2f46a9c");
 
   const handleSignInClick = async () => {
+    console.log("User logged in: ", whop.isLoggedIn());
+    let plans = await whop.getPlans();
+    console.log(plans);
     let user = await whop.login();
-    let name = user["name"];
+    console.log("whop signing");
     console.log(user);
   };
 

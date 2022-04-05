@@ -4,10 +4,7 @@ import SignInModule from "./SignInModule";
 
 const AuthModule = () => {
   const [signupOrSignin, setSignupOrSignin] = useState("signin");
-  useEffect(() => {
-    console.log(signupOrSignin);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
   return (
     <>
       <SignInModule setSignupOrSignin={setSignupOrSignin} />
