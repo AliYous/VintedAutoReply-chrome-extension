@@ -1,20 +1,15 @@
-import React, { useEffect, useState } from "react";
-import SignInModule from "./SignInModule";
-// import SignUpModule from "./SignUpModule";
+import { Button } from "@mui/material";
+import React from "react";
 
-const AuthModule = () => {
-  const [signupOrSignin, setSignupOrSignin] = useState("signin");
-
+const AuthModule = ({ whop, updateAuthStatus }) => {
+  const handleSignInClick = async () => {
+    await whop.login();
+    updateAuthStatus();
+  };
   return (
-    <>
-      <SignInModule setSignupOrSignin={setSignupOrSignin} />
-      {/* {signupOrSignin === "signin" && (
-        <SignInModule setSignupOrSignin={setSignupOrSignin} />
-      )}
-      {signupOrSignin === "signup" && (
-        <SignUpModule setSignupOrSignin={setSignupOrSignin} />
-      )} */}
-    </>
+    <Button variant="contained" onClick={handleSignInClick} xs={5}>
+      Sign In
+    </Button>
   );
 };
 
