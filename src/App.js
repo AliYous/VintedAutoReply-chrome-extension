@@ -22,9 +22,12 @@ function App() {
   };
 
   const checkActiveLicense = () => {
-    whop.getPlans().then((plans) => {
-      const plan = plans.data[0];
-      setHasActiveLicense(plan.valid);
+    const validPlanIds = [7445, 7446]; // Pro monthly & Free beta plans
+    whop.getPlans().then(({ data: plans }) => {
+      const plan = plans.find(
+        (plan) => validPlanIds.includes(plan.company_product.id) && plan.valid
+      );
+      setHasActiveLicense(plan ? true : false);
     });
   };
 
@@ -58,7 +61,7 @@ function App() {
 const Header = ({ whop, updateAuthStatus }) => {
   const handleSignOut = async () => {
     whop.logout();
-    checkAuthStatus();
+    updateAuthStatus();
   };
   return (
     <Grid
