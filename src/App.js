@@ -12,18 +12,18 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [hasActiveLicense, setHasActiveLicense] = useState(false);
 
-  const checkAuthStatus = () => {
+  const checkAuthStatus = async () => {
     const loggedIn = whop.isLoggedIn();
     setIsLoggedIn(loggedIn);
     if (loggedIn) {
-      checkActiveLicense();
+      await checkActiveLicense();
     }
     setAuthLoading(false);
   };
 
-  const checkActiveLicense = () => {
+  const checkActiveLicense = async () => {
     const validPlanIds = [7445, 7446]; // Pro monthly & Free beta plans
-    whop.getPlans().then(({ data: plans }) => {
+    await whop.getPlans().then(({ data: plans }) => {
       const plan = plans.find(
         (plan) => validPlanIds.includes(plan.company_product.id) && plan.valid
       );
@@ -85,7 +85,12 @@ const InvalidLicenseRedirect = () => {
     window.open("https://whop.com/vintmate/home", "_blank");
   };
   return (
-    <Grid container direction="column" className="invalid-license">
+    <Grid
+      container
+      direction="column"
+      className="invalid-license"
+      justifyContent="center"
+    >
       <h1>Invalid License</h1>
       <p>
         Your account is not link to an active license. Click the button below to
