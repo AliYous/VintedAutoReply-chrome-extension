@@ -85,13 +85,18 @@ const InvalidLicenseRedirect = () => {
       direction="column"
       className="invalid-license"
       justifyContent="center"
+      alignItems="center"
+      sx={{ minHeight: "280px" }}
     >
-      <h1>Invalid License</h1>
-      <p>
-        Your account is not link to an active license. Click the button below to
-        gain access!
-      </p>
-      <Button onClick={openPurchasePage}>Manage License</Button>
+      <Grid item alignItems="center" sx={{ maxWidth: "60%" }}>
+        <h1>License invalide</h1>
+        <p>
+          Votre compte ne possède pas/plus de license valide. Cliquez sur 'Gérer
+          mon abonnement' pour réactiver ou acheter une license Vintmate.
+        </p>
+      </Grid>
+
+      <Button onClick={openPurchasePage}>Gérer mon abonnement</Button>
     </Grid>
   );
 };
