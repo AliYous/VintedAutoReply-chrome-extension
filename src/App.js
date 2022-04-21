@@ -3,6 +3,7 @@
 import { Backdrop, Button, CircularProgress, Grid } from "@mui/material";
 import { useState, useEffect } from "react";
 import "./App.css";
+import SettingsDropdown from "./components/SettingsDropdown";
 import AuthModule from "./modules/Authentication";
 import AutoSendMessagesModule from "./modules/AutoSendMessagesModule";
 
@@ -59,10 +60,6 @@ function App() {
 }
 
 const Header = ({ whop, updateAuthStatus }) => {
-  const handleSignOut = async () => {
-    whop.logout();
-    updateAuthStatus();
-  };
   return (
     <Grid
       container
@@ -73,16 +70,14 @@ const Header = ({ whop, updateAuthStatus }) => {
       alignItems="center"
     >
       <img src="images/vintmate-logo.png" alt={"logo"} className="logo" />
-      <p style={{ cursor: "pointer" }} onClick={handleSignOut}>
-        logout
-      </p>
+      <SettingsDropdown updateAuthStatus={updateAuthStatus} whop={whop} />
     </Grid>
   );
 };
 
 const InvalidLicenseRedirect = () => {
   const openPurchasePage = () => {
-    window.open("https://whop.com/vintmate/home", "_blank");
+    window.open("https://whop.com/vintmate/checkout?productId=7445", "_blank");
   };
   return (
     <Grid
