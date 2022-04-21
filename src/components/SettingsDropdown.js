@@ -36,9 +36,9 @@ const SettingsDropdown = ({ updateAuthStatus, whop }) => {
           aria-labelledby="composition-button"
         >
           <MenuItem onClick={handleManageSubscription}>
-            Manage subscription
+            Gérer mon abonnement
           </MenuItem>
-          <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
+          <MenuItem onClick={handleSignOut}>Se déconnecter</MenuItem>
         </MenuList>
       </Menu>
     </div>
