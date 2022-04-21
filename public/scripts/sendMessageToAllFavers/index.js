@@ -17,39 +17,32 @@ async function sendMessageToAllFavers({
     notif.link.includes("want_it")
   );
 
-  let unreadFavNotifications = favNotifications?.filter(
-    (notif) => !notif.is_read
-  );
-
-  if (!unreadFavNotifications || unreadFavNotifications.length === 0) {
-    console.log("no unread notifications");
+  if (!favNotifications || favNotifications.length === 0) {
+    console.log("no fav notifications were found");
     return null;
   }
 
   if (lastNotificationHandled) {
-    const indexOfLastHandledNotif = unreadFavNotifications.findIndex(
+    const indexOfLastHandledNotif = favNotifications.findIndex(
       (notif) => notif.id === lastNotificationHandled
     );
 
     if (indexOfLastHandledNotif !== -1) {
-      unreadFavNotifications = unreadFavNotifications.slice(
-        0,
-        indexOfLastHandledNotif
-      );
+      favNotifications = favNotifications.slice(0, indexOfLastHandledNotif);
     }
   }
 
-  if (!unreadFavNotifications || unreadFavNotifications.length === 0) {
+  if (!favNotifications || favNotifications.length === 0) {
     console.log("All Notifications have already been handled");
     return null;
   }
 
-  unreadFavNotifications = unreadFavNotifications.map((notif) => ({
+  favNotifications = favNotifications.map((notif) => ({
     ...notif,
     senderUserId: globalThis.extractNotifSenderUserId(notif),
   }));
 
-  const currentUserId = unreadFavNotifications[0].user_id;
+  const currentUserId = favNotifications[0].user_id;
 
   const csrf_token = document.head.querySelector("[name=csrf-token]").content;
 
@@ -61,7 +54,7 @@ async function sendMessageToAllFavers({
   if (csrf_token) {
     let tempLastNotifHandledId;
 
-    await globalThis.asyncForEach(unreadFavNotifications, async (notif) => {
+    await globalThis.asyncForEach(favNotifications, async (notif) => {
       // Continue only if product is not reserved
       if (userProducts && userProducts.length > 0) {
         const isProductReserved = globalThis.checkIsProductReserved({
