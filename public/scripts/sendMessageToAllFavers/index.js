@@ -79,7 +79,6 @@ async function sendMessageToAllFavers({
         msgRecipientId: notif.senderUserId,
       });
 
-      await globalThis.randomTimeout(400, 900);
       const conversationHasMessages =
         await globalThis.checkConversationHasMessages({
           currentUserId: currentUserId,
@@ -101,7 +100,6 @@ async function sendMessageToAllFavers({
       });
 
       if (deleteEachConvo) {
-        await globalThis.randomTimeout(1300, 2500);
         await globalThis.deleteMessageThreadId({
           currentUserId: currentUserId,
           msgThreadId: msgThreadId,
