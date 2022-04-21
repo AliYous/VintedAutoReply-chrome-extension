@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "Vinted React Auto Responder",
+  "name": "Vintmate - Auto-répondeur messages Vinted",
   "version": "1.0",
   "description": "Send a pre-written message to anyone who favs your item on vinted and increase your sales - with no extra work",
   "permissions": ["storage", "tabs", "https://*/*", "http://*/*", "cookies"],
